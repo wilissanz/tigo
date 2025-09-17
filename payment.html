@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Reservar iPhone 17 Pro - Simulación</title>
+  <style>
+    :root{--purple:#6b28a7;--yellow:#ffd100;--muted:#f4f4f6}
+    body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:linear-gradient(90deg,#fff 0 55%, #ffd100 55%);color:#222}
+    .container{max-width:1100px;margin:30px auto;background:white;border-radius:6px;display:flex;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.08)}
+    .left{flex:1;background:var(--purple);color:white;padding:28px;display:flex;flex-direction:column;align-items:center;gap:18px}
+    .left img.poster{width:100%;max-width:360px;border-radius:6px;background:#fff;padding:6px}
+    .left h2{margin:0;font-weight:700}
+    .right{flex:1;padding:28px;background:white}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand img{height:42px}
+    .label{font-weight:700;font-size:20px;margin-top:6px}
+    .note{color:#5b5b5b;margin:12px 0;border-top:1px solid #eee;padding-top:12px}
+    form{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+    input[type=text], input[type=tel], input[type=month]{
+      padding:10px;border-radius:6px;border:1px solid #ddd;width:100%;
+    }
+    .row{display:flex;gap:10px}
+    .row .half{flex:1}
+    .btnPay{
+      background:var(--yellow);border:none;padding:12px;border-radius:8px;font-weight:800;cursor:pointer;margin-top:6px;
+    }
+    .small{font-size:13px;color:#555}
+    .success{background:#eef7e9;border:1px solid #c9edc8;padding:12px;border-radius:8px;color:#225a2a;margin-top:12px}
+    .danger{background:#fff4f4;border:1px solid #f1c4c4;padding:10px;border-radius:6px;color:#8a2a2a}
+    footer{padding:18px;text-align:center;font-size:14px;color:#6a6a6a}
+    @media(max-width:880px){.container{flex-direction:column}}
+  </style>
+</head>
+<body>
+
+  <div class="container" role="main">
+    <div class="left" aria-hidden="false">
+      <img src="https://via.placeholder.com/420x420?text=iPhone+17+Pro" alt="poster" class="poster">
+      <h2>Reserva - iPhone 17 Pro</h2>
+      <p style="max-width:360px;text-align:center">Para apartar tu iPhone 17 Pro debes completar el formulario. <strong>Luego</strong> realizar una recarga de <strong>Q115</strong> (simulado).</p>
+      <div style="font-size:12px;opacity:0.9;text-align:center;max-width:360px">
+        <em>Nota: Esta página es una simulación con fines educativos y de auditoría de seguridad. No envíes datos reales de tarjeta. Usa datos de prueba.</em>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="brand">
+        <img src="https://seeklogo.com/images/N/neolink-logo-6C4C9BB8E6-seeklogo.com.png" alt="neolink" onerror="this.style.display='none'">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div class="label">Monto:</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="background:#f2f2f2;padding:6px 10px;border-radius:6px">Q</div>
+              <input id="amount" style="width:90px;border:1px solid #ddd;padding:6px;border-radius:6px" value="0" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div style="font-weight:700">Contado</div>
+        <div class="small">El ingreso de datos a continuación es únicamente para <strong>apartado</strong> del nuevo iPhone 17 Pro. Tras completar, debe realizar una recarga simulada de <strong>Q115</strong> para completar la reserva.</div>
+      </div>
+
+      <!-- Form simulada -->
+      <form id="payForm" autocomplete="off" onsubmit="return processPayment(event)">
+        <label class="small">Ingresar número de tarjeta <span style="float:right"> <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" style="height:18px" alt=""><img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" style="height:18px;margin-left:6px" alt=""></span></label>
+        <input id="cardNumber" type="text" inputmode="numeric" maxlength="19" placeholder="No. Tarjeta (simulada)" required>
+
+        <div class="row">
+          <div class="half"><input id="exp" type="text" placeholder="MM/AA" required></div>
+          <div class="half"><input id="cvv" type="text" inputmode="numeric" maxlength="3" placeholder="CVV" required></div>
+        </div>
+
+        <input id="holder" type="text" placeholder="Nombre en tarjeta" required>
+
+        <div style="display:flex;gap:12px;align-items:center">
+          <button type="submit" class="btnPay">Pagar (simular)</button>
+          <div style="flex:1" class="small">Total: <strong id="displayTotal">Q0</strong></div>
+        </div>
+
+        <div id="messages" aria-live="polite"></div>
+
+      </form>
+
+      <div style="margin-top:12px;font-size:12px;color:#555">
+        <strong>Importante:</strong> Esto es una demo para pruebas de auditoría. No se envían datos a servidores reales. Si fueras a integrar un pasarela real, usarías HTTPS, tokens y cumplimiento PCI.
+      </div>
+    </div>
+  </div>
+
+  <footer>Neonet • Simulación educativa</footer>
+
+<script>
+  // Leer producto desde querystring y mostrar monto recomendado (simulado)
+  function getQuery(){return new URLSearchParams(location.search)}
+  const q = getQuery()
+  const product = q.get('product') || 'iPhone 17 Pro'
+  // mostramos monto sugerido (ejemplo)
+  document.getElementById('amount').value = '0'
+  document.getElementById('displayTotal').innerText = 'Q0'
+
+  // simple mascara para número de tarjeta
+  const cardInput = document.getElementById('cardNumber')
+  cardInput.addEventListener('input', e=>{
+    let v = e.target.value.replace(/\D/g,'').slice(0,19)
+    // insertar espacios cada 4
+    v = v.replace(/(.{4})/g,'$1 ').trim()
+    e.target.value = v
+  })
+
+  // formato exp MM/AA
+  document.getElementById('exp').addEventListener('input', e=>{
+    let v = e.target.value.replace(/\D/g,'').slice(0,4)
+    if(v.length>2) v = v.slice(0,2) + '/' + v.slice(2)
+    e.target.value = v
+  })
+
+  // simulación de pago: validaciones básicas y mensaje
+  function processPayment(evt){
+    evt.preventDefault()
+    const number = cardInput.value.replace(/\s/g,'')
+    const exp = document.getElementById('exp').value
+    const cvv = document.getElementById('cvv').value
+    const holder = document.getElementById('holder').value.trim()
+    const messages = document.getElementById('messages')
+    messages.innerHTML = ''
+
+    // Validaciones básicas (solo UI)
+    if(number.length < 13 || number.length > 19){
+      messages.innerHTML = '<div class="danger">Número de tarjeta inválido (simulado).</div>'; return false
+    }
+    if(!/^\d{2}\/\d{2}$/.test(exp)){
+      messages.innerHTML = '<div class="danger">Fecha inválida. Use MM/AA (simulado).</div>'; return false
+    }
+    if(!/^\d{3}$/.test(cvv)){
+      messages.innerHTML = '<div class="danger">CVV inválido (simulado).</div>'; return false
+    }
+    if(holder.length < 3){
+      messages.innerHTML = '<div class="danger">Ingrese el nombre del titular (simulado).</div>'; return false
+    }
+
+    // TODO: en entorno real enviar a backend seguro. Aquí solo mostramos mensaje educativo
+    messages.innerHTML = '<div class="success"><strong>Reserva simulada exitosa.</strong><br>Su solicitud para apartar <strong>'+escapeHtml(product)+'</strong> fue registrada (simulación). Para completar la reserva, el usuario debe realizar una recarga por Q115 en el servicio indicado.</div>'
+
+    // mostrar instrucción adicional
+    messages.innerHTML += '<div style="margin-top:8px" class="small">Recuerde: <strong>no</strong> enviar datos reales en esta demo. Use tarjetas de prueba en entornos sandbox.</div>'
+
+    // reset parcial (no almacenamos)
+    setTimeout(()=>{ document.getElementById('payForm').reset(); document.getElementById('displayTotal').innerText='Q0' }, 4000)
+
+    return false
+  }
+
+  function escapeHtml(s){ return String(s).replace(/[&<>"'`=\/]/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','`':'&#96;','=':'&#61;'}[c]}) }
+</script>
+</body>
+</html>
