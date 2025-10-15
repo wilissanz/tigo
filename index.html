@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="es">
 <head>
   <meta charset="utf-8" />
@@ -50,6 +50,41 @@
     .modal .bannerTop{background:#062f74;color:#fff;padding:10px;border-radius:8px;margin-bottom:12px;font-weight:700}
     .modal .big{font-size:64px;color:#0b4b6f;font-weight:800;line-height:1}
     .modal .cta{margin-top:14px;padding:10px 18px;border-radius:999px;background:#00c0ff;border:none;color:white;font-weight:700;cursor:pointer}
+
+    /* ---- COOKIES ---- */
+    .cookies-banner{
+      position:fixed;
+      bottom:0;
+      left:0;
+      right:0;
+      background:#fff;
+      border-top:2px solid var(--blue);
+      box-shadow:0 -2px 10px rgba(0,0,0,0.15);
+      padding:16px;
+      z-index:100;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      font-size:14px;
+      animation:fadeIn .4s ease;
+    }
+    .cookies-buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:flex-end;
+    }
+    .cookies-buttons button{
+      border:none;
+      border-radius:20px;
+      padding:8px 14px;
+      cursor:pointer;
+      font-weight:600;
+    }
+    .cookies-buttons .accept{background:var(--blue);color:#fff}
+    .cookies-buttons .reject{background:#eee;color:#333}
+    .cookies-buttons .config{background:var(--accent);color:#fff}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
     @media (max-width:600px){
       .modal{width:92%}
@@ -108,10 +143,22 @@
       <div class="big">95%<span style="font-size:18px;color:#ffbe00"> DCTO</span></div>
       <p style="margin:8px 0 0;color:#444">¡Precios de locura! solo rellena tu informacion y con esto se te llamara para tu nuevo Iphone prepago.</p>
 
-      <!-- Al pulsar este botón se dirige a payment.html con query params (simulación) -->
       <button class="cta" id="promoBtn">RESERVAR IPHONE 17 PRO</button>
 
       <p style="font-size:12px;margin-top:10px;color:#666">Esta promoción es una simulación con fines educativos.</p>
+    </div>
+  </div>
+
+  <!-- Banner de Cookies -->
+  <div class="cookies-banner" id="cookiesBanner" style="display:none">
+    <div>
+      Usamos cookies para mejorar tu experiencia, analizar el tráfico y personalizar el contenido. 
+      Consulta nuestros <a href="#" style="color:var(--blue);font-weight:600;text-decoration:none">Términos y Condiciones</a>.
+    </div>
+    <div class="cookies-buttons">
+      <button class="reject" onclick="rechazarCookies()">Rechazar</button>
+      <button class="config" onclick="configurarCookies()">Configurar</button>
+      <button class="accept" onclick="aceptarCookies()">Aceptar</button>
     </div>
   </div>
 
@@ -121,9 +168,7 @@
 
   // al hacer click en Ver Promoción -> ir a payment.html (simulado)
   document.getElementById('promoBtn').addEventListener('click', function(){
-    // Indicamos producto y nota. En un caso real harías una navegación segura o token.
     const product = encodeURIComponent('iPhone 17 Pro');
-    // navegamos a payment.html en la misma carpeta
     window.location.href = `payment.html?product=${product}`;
   });
 
@@ -135,6 +180,24 @@
       card.style.display = name.includes(q) ? 'flex' : 'none';
     });
   });
+
+  // ---- COOKIES ----
+  const cookiesBanner = document.getElementById('cookiesBanner');
+  if (!localStorage.getItem('cookiesAccepted')) {
+    cookiesBanner.style.display = 'flex';
+  }
+
+  function aceptarCookies(){
+    localStorage.setItem('cookiesAccepted', 'true');
+    cookiesBanner.style.display = 'none';
+  }
+  function rechazarCookies(){
+    localStorage.setItem('cookiesAccepted', 'false');
+    cookiesBanner.style.display = 'none';
+  }
+  function configurarCookies(){
+    alert("Aquí podrías abrir un panel para configurar tipos de cookies (simulación).");
+  }
 </script>
 </body>
 </html>
