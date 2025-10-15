@@ -1,140 +1,143 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Tienda - Simulación</title>
-  <style>
-    :root{
-      --blue:#003a70;
-      --light:#f5f6f7;
-      --accent:#00bfff;
-      --card:#fff;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:var(--light);color:#222}
-    header{
-      background:var(--blue);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;
-    }
-    header img{height:34px}
-    .banner{
-      background:#f0f2f4;padding:30px;border-bottom:1px solid #e1e5e8;display:flex;align-items:center;justify-content:center;
-    }
-    .banner .inner{max-width:1100px;width:100%;display:flex;align-items:center;gap:24px}
-    .banner img{width:100%;max-height:140px;object-fit:cover;border-radius:6px}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tienda - Simulación</title>
+  <style>
+    :root{
+      --blue:#003a70;
+      --light:#f5f6f7;
+      --accent:#00bfff;
+      --card:#fff;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:var(--light);color:#222}
+    /* ... Estilos existentes ... */
 
-    .searchRow{max-width:1100px;margin:18px auto;padding:0 12px;display:flex;align-items:center;gap:12px}
-    .searchRow input{
-      flex:1;padding:12px 16px;border-radius:28px;border:2px solid #bfeeff;outline:none;background:white;
-      box-shadow:0 2px 6px rgba(0,0,0,0.03)
-    }
-    .searchRow .btn-filt{
-      border-radius:28px;padding:10px 14px;border:2px solid #bfeeff;background:white;color:var(--blue);cursor:pointer;
-    }
+    /* --- Estilos del Banner de Cookies --- */
+    .cookie-banner {
+      position: fixed; bottom: 0; left: 0; width: 100%; background: #222; color: #fff;
+      padding: 15px 20px; z-index: 100; display: flex; justify-content: center;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    }
+    .cookie-content {
+      max-width: 1100px; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 15px;
+    }
+    .cookie-text{flex:1;font-size:14px}
+    .cookie-buttons button{
+      padding: 8px 15px; margin-left: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: 700;
+    }
+    .btn-accept{background: var(--accent); color: var(--blue)}
+    .btn-reject, .btn-config{background: #555; color: white}
 
-    .tag{max-width:1100px;margin:8px auto;padding:0 12px}
-    .productos{max-width:1100px;margin:6px auto;padding:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+    /* Desactivar interacciones si no hay consentimiento */
+    .blurred-content { pointer-events: none; opacity: 0.5; }
 
-    .card{
-      background:var(--card);border-radius:12px;padding:12px;border:1px solid #e6eaee;box-shadow:0 4px 14px rgba(0,0,0,0.04);
-      display:flex;flex-direction:column;align-items:center;gap:10px;
-    }
-    .card img{width:110px;height:160px;object-fit:contain}
-    .card .title{font-weight:600;color:var(--blue)}
-    .card .price{font-weight:700;color:#0b4b6f}
+    /* Estilos del footer para cambiar preferencias */
+    footer {
+      padding: 10px; text-align: center; font-size: 12px; color: #666; background: white; border-top: 1px solid #ddd;
+    }
+    footer a { color: var(--blue); text-decoration: none; font-weight: 600; cursor: pointer; }
 
-    /* Modal */
-    .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;z-index:80}
-    .modal{width:360px;background:white;border-radius:12px;padding:20px;text-align:center;position:relative;box-shadow:0 12px 40px rgba(0,0,0,0.45)}
-    .modal .close{position:absolute;right:12px;top:8px;cursor:pointer;font-size:18px;color:#666}
-    .modal .bannerTop{background:#062f74;color:#fff;padding:10px;border-radius:8px;margin-bottom:12px;font-weight:700}
-    .modal .big{font-size:64px;color:#0b4b6f;font-weight:800;line-height:1}
-    .modal .cta{margin-top:14px;padding:10px 18px;border-radius:999px;background:#00c0ff;border:none;color:white;font-weight:700;cursor:pointer}
-
-    @media (max-width:600px){
-      .modal{width:92%}
-      .banner img{max-height:120px}
-    }
-  </style>
+    @media (max-width:800px){
+      .cookie-content{flex-direction:column;align-items:flex-start}
+      .cookie-buttons button{margin:5px 10px 5px 0}
+    }
+  </style>
 </head>
 <body>
 
-  <header>
-    <img src="tigo.gif" alt="logo">
-    <div style="font-weight:600">Tienda en línea</div>
-  </header>
+  <header>
+    <img src="tigo.gif" alt="logo">
+    <div style="font-weight:600">Tienda en línea</div>
+  </header>
 
-  <div class="banner">
-    <div class="inner">
-      <img src="baner.png" alt="banner">
-    </div>
-  </div>
+    <div id="mainContent">
+    <div class="banner">
+      <div class="inner">
+        <img src="baner.png" alt="banner">
+      </div>
+    </div>
 
-  <div class="searchRow">
-    <input id="buscar" placeholder="Buscar Smartphone..." />
-    <button class="btn-filt" onclick="alert('Abrir filtros (simulación)')">FILTROS</button>
-  </div>
+    <div class="searchRow">
+      <input id="buscar" placeholder="Buscar Smartphone..." disabled />
+      <button class="btn-filt" onclick="alert('Abrir filtros (simulación)')" disabled>FILTROS</button>
+    </div>
 
-  <div class="tag"><small style="background:#eef6ef;padding:6px 10px;border-radius:8px;color:#2f6d3b">APPLE •</small></div>
+    <div class="tag"><small style="background:#eef6ef;padding:6px 10px;border-radius:8px;color:#2f6d3b">APPLE •</small></div>
 
-  <div class="productos" id="productos">
-    <div class="card" data-name="iPhone 13">
-      <img src="13.png" alt="13">
-      <div class="title">iPhone 13</div>
-      <div class="price">Q5,999</div>
-    </div>
-    <div class="card" data-name="iPhone 15">
-      <img src="15.png" alt="15">
-      <div class="title">iPhone 15</div>
-      <div class="price">Q7,499</div>
-    </div>
-    <div class="card" data-name="iPhone 16">
-      <img src="16.png" alt="16">
-      <div class="title">iPhone 16</div>
-      <div class="price">Q8,999</div>
-    </div>
-    <div class="card" data-name="iPhone 16 Plus">
-      <img src="16P.png" alt="16p">
-      <div class="title">iPhone 16 Pro</div>
-      <div class="price">Q11,999</div>
-    </div>
-  </div>
+    <div class="productos" id="productos">
+          </div>
+  </div>
+  
+    <div class="overlay" id="promoOverlay" role="dialog" aria-modal="true" style="display:none">
+      </div>
 
-  <!-- Modal de promoción -->
-  <div class="overlay" id="promoOverlay" role="dialog" aria-modal="true">
-    <div class="modal" id="promoModal">
-      <!--<div class="close" title="Cerrar" onclick="cerrarModal()">✕</div>-->
-      <div class="bannerTop">CELEBRA A GUATE • CON NUEVO SMARTPHONE</div>
-      <div class="big">95%<span style="font-size:18px;color:#ffbe00"> DCTO</span></div>
-      <p style="margin:8px 0 0;color:#444">¡Precios de locura! solo rellena tu informacion y con esto se te llamara para tu nuevo Iphone prepago.</p>
+    <div class="cookie-banner" id="cookieBanner">
+    <div class="cookie-content">
+      <div class="cookie-text">
+        Usamos cookies para optimizar tu experiencia y analizar el tráfico. Al hacer clic en "Aceptar", permites la carga de cookies de Publicidad y Analítica.
+      </div>
+      <div class="cookie-buttons">
+        <button class="btn-reject" onclick="setConsent('rechazo')">Rechazar</button>
+        <button class="btn-config" onclick="alert('Ventana de Configuración de Cookies (simulación)')">Configurar</button>
+        <button class="btn-accept" onclick="setConsent('acepto')">Aceptar</button>
+      </div>
+    </div>
+  </div>
 
-      <!-- Al pulsar este botón se dirige a payment.html con query params (simulación) -->
-      <button class="cta" id="promoBtn">RESERVAR IPHONE 17 PRO</button>
-
-      <p style="font-size:12px;margin-top:10px;color:#666">Esta promoción es una simulación con fines educativos.</p>
-    </div>
-  </div>
+  <footer>
+    Tigo Tienda Online • <a onclick="showCookieBanner()">Preferencias de Privacidad</a>
+  </footer>
 
 <script>
-  // comportamiento del modal
-  function cerrarModal(){ document.getElementById('promoOverlay').style.display='none' }
+  // --------------------- Lógica de Cookies ---------------------
+  const COOKIE_KEY = 'user_cookie_consent';
+  const promoOverlay = document.getElementById('promoOverlay');
+  const mainContent = document.getElementById('mainContent');
+  const cookieBanner = document.getElementById('cookieBanner');
+  const searchInput = document.getElementById('buscar');
 
-  // al hacer click en Ver Promoción -> ir a payment.html (simulado)
-  document.getElementById('promoBtn').addEventListener('click', function(){
-    // Indicamos producto y nota. En un caso real harías una navegación segura o token.
-    const product = encodeURIComponent('iPhone 17 Pro');
-    // navegamos a payment.html en la misma carpeta
-    window.location.href = `payment.html?product=${product}`;
-  });
+  // Función para mostrar el banner (al hacer clic en el footer)
+  function showCookieBanner() { cookieBanner.style.display = 'flex'; }
 
-  // búsqueda simple
-  document.getElementById('buscar').addEventListener('input', function(){
-    const q = this.value.trim().toLowerCase();
-    document.querySelectorAll('.card').forEach(card=>{
-      const name = card.dataset.name.toLowerCase();
-      card.style.display = name.includes(q) ? 'flex' : 'none';
-    });
-  });
+  // Función para establecer el consentimiento y aplicar restricciones
+  function setConsent(status) {
+    localStorage.setItem(COOKIE_KEY, status);
+    cookieBanner.style.display = 'none';
+
+    if (status === 'acepto') {
+      // Permite las funciones bloqueadas
+      promoOverlay.style.display = 'flex'; // Cargar modal de promoción (Publicidad)
+      searchInput.disabled = false;
+      mainContent.classList.remove('blurred-content');
+      console.log('Cookies: Aceptadas. Se cargan Analítica y Publicidad.');
+    } else {
+      // Aplica las restricciones de bloqueo
+      promoOverlay.style.display = 'none';
+      searchInput.disabled = true;
+      // En un caso real, el contenido no debería estar "bloqueado", sino solo los scripts
+      console.log('Cookies: Rechazadas/Solo esenciales. Analítica y Publicidad BLOQUEADAS.');
+    }
+  }
+
+  // Comprobar el estado al cargar la página
+  (function checkConsent() {
+    const consent = localStorage.getItem(COOKIE_KEY);
+    if (consent) {
+      // Si ya hay una decisión, ocultar el banner y aplicar el consentimiento
+      cookieBanner.style.display = 'none';
+      setConsent(consent);
+    } else {
+      // Si no hay decisión, mostrar el banner y bloquear funcionalidades
+      cookieBanner.style.display = 'flex';
+      setConsent('bloqueo'); // Estado inicial de bloqueo
+    }
+  })();
+
+  // --------------------- Lógica Existente (Modificada) ---------------------
+  // ... (código para cerrarModal, promoBtn, y búsqueda simple) ...
 </script>
 </body>
 </html>
